@@ -1,0 +1,7 @@
+{
+    "require": {
+        "slim/slim": "^2.6",
+        "tuupola/slim-jwt-auth": "^0.4.0",
+        "tuupola/slim-basic-auth": "^1.0"
+    }
+}
