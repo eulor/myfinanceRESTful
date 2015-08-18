@@ -11,6 +11,8 @@ interface DB {
     public function escape_string($string);
 
     public function query($query);
+    
+    public function insert_id();
 
     public function fetch_assoc($result);
 

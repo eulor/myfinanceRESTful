@@ -29,10 +29,24 @@ class MysqlDB implements DB {
         return $this->connection->real_escape_string($string);
     }
 
+    /**
+     * 
+     * @param string $query
+     * @return boolean OR mysqli_result for successful SELECT, SHOW, DESCRIBE or EXPLAIN
+     */
     public function query($query) {
         return $this->connection->query($query);
     }
+    
+    public function insert_id() {
+        return $this->connection->insert_id;
+    }
 
+    /**
+     * 
+     * @param mysqli_result $result
+     * @return array associative of strings representing the fetched row OR NULL
+     */
     public function fetch_assoc($result) {
         $row = false;
         if (is_a($result, \mysqli_result::class)) {
@@ -41,6 +55,10 @@ class MysqlDB implements DB {
         return $row;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     public function close() {
         return $this->connection->close();
     }

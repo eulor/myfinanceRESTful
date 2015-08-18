@@ -31,6 +31,79 @@ $app->get('/accounts(/:id)', function ($id=null) use($context) {
     echo $controller->get($id);
 });
 
+$app->post('/accounts', function() use ($context,$app){
+    try{
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountController($repository);
+        $account = $controller->post($input);
+        
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($account);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->put('/accounts/:id', function($id) use ($context,$app){
+    try{
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountController($repository);
+        $account = $controller->put($input);
+        
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($account);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->delete('/accounts/:id', function($id) use ($context,$app){
+    try{
+        $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountController($repository);
+        $account = $controller->delete($id);
+        
+        $app->response()->status(204);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
 $app->run();
+
+
+/**
+* Hilfsfunktion um schöne Exception-Strings erstellen zu können. Anstatt $e->getMessage() im catch-Block aufzurufen
+* 
+* @param Exception $e
+* @return String
+*/
+function makePrettyException(Exception $e) {
+    $trace = $e->getTrace();
+    $result = 'Exception: "';
+    $result .= $e->getMessage();
+    $result .= '" @ ';
+    if($trace[0]['class'] != '') {
+        $result .= $trace[0]['class'];
+        $result .= '->';
+    }
+    $result .= $trace[0]['function'];
+    $result .= '();<br />';
+    return $result;
+}
+
 
 

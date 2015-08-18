@@ -23,16 +23,46 @@ class AccountController {
         return json_encode($accounts);
     }
 
+    /**
+     * 
+     * @param int $id
+     */
     public function delete($id) {
-        
+        $this->repository->deleteById($id);
     }
 
-    public function put($id) {
-        
+    /**
+     * 
+     * @param Object $input
+     * @return \myfinance\model\Account
+     */
+    public function put($input) {
+        $account = $this->createNewAccountInstanceFromInput($input);
+        return $this->repository->update($account);
     }
 
-    public function post($id) {
-        
+    /**
+     * 
+     * @param Object $input
+     * @return \myfinance\model\Account
+     */
+    public function post($input) {
+        $account = $this->createNewAccountInstanceFromInput($input);
+        return $this->repository->create($account);
+    }
+    
+    private function createNewAccountInstanceFromInput($input){
+        $account = new \myfinance\model\Account();
+        if(isset($input->id)){
+            $account->id = $input->id;    
+        }
+        if(isset($input->description)){
+            $account->description = $input->description;    
+        }
+        if(isset($input->saldo)){
+            $account->saldo = $input->saldo;
+        }
+        return $account;
     }
 
 }

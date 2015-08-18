@@ -32,6 +32,10 @@ class DummyDB implements DB {
     public function query($query) {
         return true;
     }
+    
+    public function insert_id(){
+        return $this->counter;
+    }
 
     public function fetch_assoc($result) {
         $item = false;

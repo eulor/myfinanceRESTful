@@ -15,6 +15,11 @@ class MysqlAccountRepository implements AccountRepository {
         $this->db->connect();
     }
 
+    /**
+     * 
+     * @param int $id
+     * @return \myfinance\model\Account
+     */
     public function get($id) {
         $sql = "SELECT * FROM accounts WHERE id='" . intval($id) . "' AND user='" . $this->userId . "' LIMIT 1;";
         $res = $this->db->query($sql);
@@ -32,6 +37,10 @@ class MysqlAccountRepository implements AccountRepository {
         return $account;
     }
 
+    /**
+     * 
+     * @return array with Items of Type \myfinance\model\Account
+     */
     public function getAll() {
         $accounts = array();
 
@@ -44,20 +53,62 @@ class MysqlAccountRepository implements AccountRepository {
         return $accounts;
     }
 
+    /**
+     * 
+     * @param \myfinance\model\Account $account
+     * @return \myfinance\model\Account
+     * @throws \Exception
+     */
     public function update(\myfinance\model\Account $account) {
-        
+        $sql = "UPDATE accounts SET " .
+                "description = '" . $this->db->escape_string($account->description) . "', " .
+                "saldo = '" . $this->db->escape_string($account->saldo) . "' " .
+                "WHERE id='" . intval($account->id) . "' AND user='" . $this->userId . "' LIMIT 1;";
+        if (!$this->db->query($sql)) {
+            throw new \Exception("Account konnte in DB nicht aktualisiert werden: " . $this->db->error());
+        }
+        return $this->get($account->id);
     }
 
+    /**
+     * 
+     * @param \myfinance\model\Account $account
+     * @return \myfinance\model\Account
+     * @throws \Exception
+     */
     public function create(\myfinance\model\Account $account) {
-        
+        $sql = "INSERT INTO accounts " .
+                "(description, " .
+                "saldo, " .
+                "user) " .
+                "VALUES ('" . $this->db->escape_string($account->description) . "'," .
+                "'" . $this->db->escape_string($account->saldo) . "'," .
+                "'" . $this->userId . "');";
+        if (!$this->db->query($sql)) {
+            throw new \Exception("Account konnte nicht in DB erstellt werden: " . $this->db->error());
+        }
+        return $this->get($this->db->insert_id());
     }
 
+    /**
+     * 
+     * @param \myfinance\model\Account $account
+     * @throws \Exception
+     */
     public function delete(\myfinance\model\Account $account) {
-        
+        $this->deleteById($account->id);
     }
 
+    /**
+     * 
+     * @param int $id
+     * @throws \Exception
+     */
     public function deleteById($id) {
-        
+        $sql = "DELETE FROM accounts WHERE id='" . intval($id) . "' AND user='" . $this->userId . "' LIMIT 1;";
+        if (!$this->db->query($sql)) {
+            throw new \Exception("Account konnte in DB nicht gelöscht werden: " . $this->db->error());
+        }
     }
 
 }
