@@ -1,5 +1,6 @@
 <?php
-namespace myfinance\db;
+namespace myfinance\test\db;
+use myfinance\db\DummyDB;
 
 class DummyDBTest extends \PHPUnit_Framework_TestCase
 {
