@@ -7,7 +7,7 @@ class AccountingEntry {
     public $id;
     public $amount;
     public $description;
-    public $dateTime;
+    public $date;
     public $account;
     public $category;
 

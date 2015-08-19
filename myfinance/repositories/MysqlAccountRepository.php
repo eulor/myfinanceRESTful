@@ -21,7 +21,8 @@ class MysqlAccountRepository implements AccountRepository {
      * @return \myfinance\model\Account
      */
     public function get($id) {
-        $sql = "SELECT * FROM accounts WHERE id='" . intval($id) . "' AND user='" . $this->userId . "' LIMIT 1;";
+        $sql = "SELECT id,description,saldo FROM accounts " .
+                "WHERE id='" . intval($id) . "' AND user='" . $this->userId . "' LIMIT 1;";
         $res = $this->db->query($sql);
         $row = $this->db->fetch_assoc($res);
         return $this->createAccountFromRow($row);
@@ -44,7 +45,7 @@ class MysqlAccountRepository implements AccountRepository {
     public function getAll() {
         $accounts = array();
 
-        $sql = "SELECT * FROM accounts WHERE user='" . $this->userId . "';";
+        $sql = "SELECT id,description,saldo FROM accounts WHERE user='" . $this->userId . "';";
         $res = $this->db->query($sql);
         while ($row = $this->db->fetch_assoc($res)) {
             $accounts[] = $this->createAccountFromRow($row);

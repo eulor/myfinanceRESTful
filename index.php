@@ -17,22 +17,22 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     ],
     "environment" => "REDIRECT_HTTP_AUTHORIZATION",
     "callback" => function ($arguments) use ($user) {
-        $user->name = $arguments['user'];
-        $user->setIdByName();
-    }
+$user->name = $arguments['user'];
+$user->setIdByName();
+}
 ]));
 
 $db = new \myfinance\db\MysqlDB(DB_HOST, DB_USER, DB_PW, DB_NAME);
-$context = new myfinance\FinanceContext($db,$user);
+$context = new myfinance\FinanceContext($db, $user);
 
-$app->get('/accounts(/:id)', function ($id=null) use($context) {
+$app->get('/accounts(/:id)', function ($id = null) use($context) {
     $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
     $controller = new \myfinance\controller\AccountController($repository);
     echo $controller->get($id);
 });
 
-$app->post('/accounts', function() use ($context,$app){
-    try{
+$app->post('/accounts', function() use ($context, $app) {
+    try {
         // get and decode JSON request body
         $request = $app->request();
         $body = $request->getBody();
@@ -41,7 +41,7 @@ $app->post('/accounts', function() use ($context,$app){
         $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
         $controller = new \myfinance\controller\AccountController($repository);
         $account = $controller->post($input);
-        
+
         $app->response()->header('Content-Type', 'appliaction/json');
         echo json_encode($account);
     } catch (Exception $e) {
@@ -50,8 +50,8 @@ $app->post('/accounts', function() use ($context,$app){
     }
 });
 
-$app->put('/accounts/:id', function($id) use ($context,$app){
-    try{
+$app->put('/accounts/:id', function($id) use ($context, $app) {
+    try {
         // get and decode JSON request body
         $request = $app->request();
         $body = $request->getBody();
@@ -60,7 +60,7 @@ $app->put('/accounts/:id', function($id) use ($context,$app){
         $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
         $controller = new \myfinance\controller\AccountController($repository);
         $account = $controller->put($input);
-        
+
         $app->response()->header('Content-Type', 'appliaction/json');
         echo json_encode($account);
     } catch (Exception $e) {
@@ -69,12 +69,69 @@ $app->put('/accounts/:id', function($id) use ($context,$app){
     }
 });
 
-$app->delete('/accounts/:id', function($id) use ($context,$app){
-    try{
+$app->delete('/accounts/:id', function($id) use ($context, $app) {
+    try {
         $repository = myfinance\repositories\factories\AccountRepositoryFactory::create($context);
         $controller = new \myfinance\controller\AccountController($repository);
         $account = $controller->delete($id);
-        
+
+        $app->response()->status(204);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->get('/accountingentries(/:id)', function ($id = null) use($context) {
+    $repository = myfinance\repositories\factories\AccountingEntryRepositoryFactory::create($context);
+    $controller = new \myfinance\controller\AccountingEntryController($repository);
+    echo $controller->get($id);
+});
+
+$app->post('/accountingentries', function() use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\AccountingEntryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountingEntryController($repository);
+        $accountingEntry = $controller->post($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($accountingEntry);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->put('/accountingentries/:id', function($id) use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\AccountingEntryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountingEntryController($repository);
+        $accountingEntry = $controller->put($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($accountingEntry);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->delete('/accountingentries/:id', function($id) use ($context, $app) {
+    try {
+        $repository = myfinance\repositories\factories\AccountingEntryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\AccountingEntryController($repository);
+        $accountingEntry = $controller->delete($id);
+
         $app->response()->status(204);
     } catch (Exception $e) {
         $app->response()->status(400);
@@ -84,19 +141,18 @@ $app->delete('/accounts/:id', function($id) use ($context,$app){
 
 $app->run();
 
-
 /**
-* Hilfsfunktion um schöne Exception-Strings erstellen zu können. Anstatt $e->getMessage() im catch-Block aufzurufen
-* 
-* @param Exception $e
-* @return String
-*/
+ * Hilfsfunktion um schöne Exception-Strings erstellen zu können. Anstatt $e->getMessage() im catch-Block aufzurufen
+ * 
+ * @param Exception $e
+ * @return String
+ */
 function makePrettyException(Exception $e) {
     $trace = $e->getTrace();
     $result = 'Exception: "';
     $result .= $e->getMessage();
     $result .= '" @ ';
-    if($trace[0]['class'] != '') {
+    if ($trace[0]['class'] != '') {
         $result .= $trace[0]['class'];
         $result .= '->';
     }
@@ -104,6 +160,3 @@ function makePrettyException(Exception $e) {
     $result .= '();<br />';
     return $result;
 }
-
-
-

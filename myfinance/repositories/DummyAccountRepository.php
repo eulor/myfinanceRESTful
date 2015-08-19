@@ -3,8 +3,9 @@
 namespace myfinance\repositories;
 
 class DummyAccountRepository implements AccountRepository {
+
     private $context;
-    
+
     public function __construct(\myfinance\FinanceContext $context) {
         $this->context = $context;
     }
