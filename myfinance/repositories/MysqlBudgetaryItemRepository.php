@@ -100,7 +100,7 @@ class MysqlBudgetaryItemRepository implements BudgetaryItemRepository {
      */
     public function update(\myfinance\model\BudgetaryItem $budgetaryItem) {
         $sql = "UPDATE budgetaryitems SET " .
-                "description = '" . $this->db->escape_string($budgetaryItem->description) . "', " .
+                "description = '" . $this->db->escape_string($budgetaryItem->description) . "' " .
                 "WHERE id='" . intval($budgetaryItem->id) . "' AND user='" . $this->userId . "' LIMIT 1;";
         if (!$this->db->query($sql)) {
             throw new \Exception("BudgetaryItem konnte in DB nicht aktualisiert werden: " . $this->db->error());
