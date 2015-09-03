@@ -196,6 +196,63 @@ $app->delete('/budgetaryitems/:id', function($id) use ($context, $app) {
     }
 });
 
+$app->get('/quotas(/:id)', function ($id = null) use($context) {
+    $repository = myfinance\repositories\factories\QuotaRepositoryFactory::create($context);
+    $controller = new \myfinance\controller\QuotaController($repository);
+    echo $controller->get($id);
+});
+
+$app->post('/quotas', function() use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\QuotaRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\QuotaController($repository);
+        $quota = $controller->post($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($quota);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->put('/quotas/:id', function($id) use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\QuotaRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\QuotaController($repository);
+        $quota = $controller->put($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($quota);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->delete('/quotas/:id', function($id) use ($context, $app) {
+    try {
+        $repository = myfinance\repositories\factories\QuotaRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\QuotaController($repository);
+        $quota = $controller->delete($id);
+
+        $app->response()->status(204);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
 $app->run();
 
 /**
