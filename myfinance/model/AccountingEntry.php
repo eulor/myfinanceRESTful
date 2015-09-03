@@ -11,5 +11,4 @@ class AccountingEntry {
     public $account;
     public $category;
 
-
 }

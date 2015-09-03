@@ -1,6 +1,7 @@
 <?php
 
 namespace myfinance\test\repositories\factories;
+
 use myfinance\repositories\factories\AccountingEntryRepositoryFactory;
 
 class AccountingEntryRepositoryFactoryTest extends \PHPUnit_Framework_TestCase {

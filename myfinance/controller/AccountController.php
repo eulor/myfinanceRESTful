@@ -50,16 +50,16 @@ class AccountController {
         $account = $this->createNewAccountInstanceFromInput($input);
         return $this->repository->create($account);
     }
-    
-    private function createNewAccountInstanceFromInput($input){
+
+    private function createNewAccountInstanceFromInput($input) {
         $account = new \myfinance\model\Account();
-        if(isset($input->id)){
-            $account->id = $input->id;    
+        if (isset($input->id)) {
+            $account->id = $input->id;
         }
-        if(isset($input->description)){
-            $account->description = $input->description;    
+        if (isset($input->description)) {
+            $account->description = $input->description;
         }
-        if(isset($input->saldo)){
+        if (isset($input->saldo)) {
             $account->saldo = $input->saldo;
         }
         return $account;

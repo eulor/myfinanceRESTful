@@ -37,7 +37,7 @@ class MysqlDB implements DB {
     public function query($query) {
         return $this->connection->query($query);
     }
-    
+
     public function insert_id() {
         return $this->connection->insert_id;
     }
