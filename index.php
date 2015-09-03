@@ -139,6 +139,63 @@ $app->delete('/accountingentries/:id', function($id) use ($context, $app) {
     }
 });
 
+$app->get('/budgetaryitems(/:id)', function ($id = null) use($context) {
+    $repository = myfinance\repositories\factories\BudgetaryItemRepositoryFactory::create($context);
+    $controller = new \myfinance\controller\BudgetaryController($repository);
+    echo $controller->get($id);
+});
+
+$app->post('/budgetaryitems', function() use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\BudgetaryItemRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\BudgetaryController($repository);
+        $budgetaryItem = $controller->post($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($budgetaryItem);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->put('/budgetaryitems/:id', function($id) use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\BudgetaryItemRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\BudgetaryController($repository);
+        $budgetaryItem = $controller->put($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($budgetaryItem);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->delete('/budgetaryitems/:id', function($id) use ($context, $app) {
+    try {
+        $repository = myfinance\repositories\factories\BudgetaryItemRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\BudgetaryController($repository);
+        $budgetaryItem = $controller->delete($id);
+
+        $app->response()->status(204);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
 $app->run();
 
 /**
