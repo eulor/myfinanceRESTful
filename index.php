@@ -253,6 +253,63 @@ $app->delete('/quotas/:id', function($id) use ($context, $app) {
     }
 });
 
+$app->get('/categories(/:id)', function ($id = null) use($context) {
+    $repository = myfinance\repositories\factories\CategoryRepositoryFactory::create($context);
+    $controller = new \myfinance\controller\CategoryController($repository);
+    echo $controller->get($id);
+});
+
+$app->post('/categories', function() use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\CategoryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\CategoryController($repository);
+        $category = $controller->post($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($category);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->put('/categories/:id', function($id) use ($context, $app) {
+    try {
+        // get and decode JSON request body
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body);
+
+        $repository = myfinance\repositories\factories\CategoryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\CategoryController($repository);
+        $category = $controller->put($input);
+
+        $app->response()->header('Content-Type', 'appliaction/json');
+        echo json_encode($category);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
+$app->delete('/categories/:id', function($id) use ($context, $app) {
+    try {
+        $repository = myfinance\repositories\factories\CategoryRepositoryFactory::create($context);
+        $controller = new \myfinance\controller\CategoryController($repository);
+        $category = $controller->delete($id);
+
+        $app->response()->status(204);
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', makePrettyException($e));
+    }
+});
+
 $app->run();
 
 /**
